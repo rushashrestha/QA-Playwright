@@ -1,21 +1,25 @@
 //POST request with static data from JSON file
+import { test, expect } from '@playwright/test';
+import bookingDetails from './fixtures/test-data.json' assert { type: 'json' };
+import { URLs } from './fixtures/URLs.js';
+import { validator } from './helpers/apiHelpers.js';
+let api;
 
-const { test, expect } = require('@playwright/test');
-const bookingDetails = require('./fixtures/test-data.json');
+const bookingURL = URLs.bookingURL;
+
+test.beforeEach(async ({}) => {
+    api = new validator();
+});
 
 test('creating a booking', async ({ request }) => {
     //making a post request to endpoint /booking
-     const response = await request.post("/booking", {
+     const response = await request.post(bookingURL, {
         //payload 
         data: bookingDetails
     });
     //assertions
-    expect(response.ok()).toBeTruthy();
-    expect(response.status()).toBe(200);
-    const responseBody = await response.json()
-    console.log(responseBody);
-    expect(responseBody.booking).toHaveProperty("firstname", "Rusha");
-    expect(responseBody.booking).toHaveProperty("lastname", "Shrestha");
-    expect(responseBody.booking).toHaveProperty("totalprice", 111);
-    expect(responseBody.booking).toHaveProperty("depositpaid", true);
+    await api.statusValidation(response);
+    const responseBody = await api.validateResponseBody(response);
+    await api.validateBookingFields(responseBody.booking, bookingDetails);
+
 });

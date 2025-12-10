@@ -1,49 +1,49 @@
 import { test, expect } from "@playwright/test";
+import { URLs } from "./fixtures/URLs.js";
+import { validator } from "./helpers/apiHelpers.js";
+let api;
+
+test.beforeEach(async ({}) => {
+  api = new validator();
+});
+
+const bookingId = 7;
+const patchURL = `${URLs.bookingURL}/${bookingId}`;
+
+const payload = {
+    firstname: "updatedFirstName3",
+    lastname: "updatedLastName3"
+};
 
 let token;
 
-test.beforeAll(async ({ request }) => {
-  const authResponse = await request.post("/auth", {
-    data: {
-      username: "admin",
-      password: "password123",
-    },
+test.beforeEach(async ({ request }) => {
+      token = await api.auth(request);
+   
   });
-  const authBody = await authResponse.json();
-  token = authBody.token;
-  console.log("Authentication token:", token);
-});
 
 test("PATCH: Updating a resource partially", async ({ request }) => {
-  const response = await request.patch("/booking/3", {  
+  const response = await request.patch(patchURL, {  
     headers: {
       'Cookie': `token=${token}`,
       'Content-Type': 'application/json'  
     },
-    data: {
-      firstname: "UpdatedFirstName1",
-      lastname: "UpdatedLastName1",
-    },
+    data: payload,
   });
 
   console.log("PATCH Response Status:", response.status());
   console.log("PATCH Response Headers:", response.headers());
   
-  expect(response.ok()).toBeTruthy();
-  expect(response.status()).toBe(200);
-  
-  const responseBody = await response.json();
-  console.log("PATCH Response Body:", responseBody);
-  expect(responseBody).toHaveProperty("firstname", "UpdatedFirstName1");
-  expect(responseBody).toHaveProperty("lastname", "UpdatedLastName1");
+  await api.statusValidation(response);
+  const responseBody = await api.validateResponseBody(response);
+  expect(responseBody.firstname).toBe(payload.firstname);
+  expect(responseBody.lastname).toBe(payload.lastname);
 });
 
 test('GET: verify the booking was updated', async ({ request }) => {
-  const response = await request.get('/booking/3');
-  expect(response.ok()).toBeTruthy();
-  expect(response.status()).toBe(200);
-  const responseBody = await response.json();
-  console.log('GET Response after update:', responseBody);
-  expect(responseBody.firstname).toBe("UpdatedFirstName1");
-  expect(responseBody.lastname).toBe("UpdatedLastName1");
+  const response = await request.get(patchURL);
+  await api.statusValidation(response);
+  const responseBody = await api.validateResponseBody(response);
+  expect(responseBody.firstname).toBe(payload.firstname);
+  expect(responseBody.lastname).toBe(payload.lastname);
 });
