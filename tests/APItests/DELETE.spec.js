@@ -1,29 +1,23 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { URLs } from "./fixtures/URLs.js";
-import { validator } from './helpers/apiHelpers.js';
+import { validator } from "./helpers/apiHelpers.js";
+import { statusCode } from "./fixtures/statusCodes.js";
 let api;
-
-test.beforeEach(async ({}) => {
-    api = new validator();
-});
 
 let token;
 
 const bookingURL = URLs.bookingURL;
-const bookingId = 10;
+const bookingId = 14;
 const deleteURL = `${bookingURL}/${bookingId}`;
 
-test.beforeEach(async ({ request }) => {
+test.beforeEach(async ({request}) => {
+  api = new validator(request);
   token = await api.auth(request);
 });
 
 test("DELETE: removing a booking", async ({ request }) => {
   const response = await request.delete(deleteURL, {
-    headers: {
-      'Cookie': `token=${token}`,
-      "Content-Type": "application/json",
-    },
+    headers: await api.getAuthHeaders(token),
   });
-  expect(response.ok()).toBeTruthy();
-  expect(response.statusText()).toBe("Created");
+  await api.statusValidation(response, statusCode.created);
 });

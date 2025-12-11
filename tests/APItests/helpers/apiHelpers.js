@@ -8,10 +8,6 @@ const authData = {
   password: "password123",
 };
 let token;
-const headers = {
-  Cookie: `token=${token}`,
-  "Content-Type": "application/json",
-};
 
 export class validator {
   async statusValidation(response, expectedStatus = statusCode.successCode) {
@@ -26,17 +22,24 @@ export class validator {
   }
 
   async validateBookingFields(booking, expected) {
-    expect(booking.firstname).toBe(expected.firstname);
-    expect(booking.lastname).toBe(expected.lastname);
-    expect(booking.totalprice).toBe(expected.totalprice);
-    expect(booking.depositpaid).toBe(expected.depositpaid);
+    expect(booking).toMatchObject({
+      firstname: expected.firstname,
+      lastanme: expected.lastname,
+      totalprice: expected.totalprice,
+      depositpaid: expected.depositpaid,
+    });
+  }
+
+  async getAuthHeaders(token) {
+    return {
+      Cookie: `token=${token}`,
+      "Content-Type": "application/json",
+    };
   }
 
   async auth(request) {
     const authResponse = await request.post(authURL, {
-      headers: {
-        "content-Type": "application/json"
-      },
+      headers: this.getAuthHeaders,
       data: authData,
     });
     expect(authResponse.ok()).toBeTruthy();

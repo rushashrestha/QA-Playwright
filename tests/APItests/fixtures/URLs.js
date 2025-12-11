@@ -1,5 +1,4 @@
-export const URLs ={
-    bookingURL: '/booking',
-    authURL: '/auth'
-
-}
+export const URLs = {
+  bookingURL: "/booking",
+  authURL: "/auth",
+};
