@@ -3,7 +3,7 @@ import { URLs } from "./fixtures/URLs.js";
 import { validator } from "./helpers/apiHelpers.js";
 let api;
 
-const bookingId = 7;
+const bookingId = 9;
 const putURL = `${URLs.bookingURL}/${bookingId}`;
 
 const payload = {
