@@ -7,7 +7,7 @@ let api;
 let token;
 
 const bookingURL = URLs.bookingURL;
-const bookingId = 16;
+const bookingId = 20;
 const deleteURL = `${bookingURL}/${bookingId}`;
 
 test.beforeEach(async ({request}) => {

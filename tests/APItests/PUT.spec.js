@@ -3,7 +3,7 @@ import { URLs } from "./fixtures/URLs.js";
 import { validator } from "./helpers/apiHelpers.js";
 let api;
 
-const bookingId = 9;
+const bookingId = 18;
 const putURL = `${URLs.bookingURL}/${bookingId}`;
 
 const payload = {
@@ -47,5 +47,8 @@ test.describe("Booking CRUD operations", () => {
     const response = await request.get(putURL);
     await api.statusValidation(response);
     await api.validateResponseBody(response);
+  });
+  test.afterAll(async ({}) => {
+    console.log('test finished')
   });
 });

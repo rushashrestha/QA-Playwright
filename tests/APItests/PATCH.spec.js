@@ -4,7 +4,7 @@ import { validator } from "./helpers/apiHelpers.js";
 let api;
 let token;
 
-const bookingId = 8;
+const bookingId = 17;
 const patchURL = `${URLs.bookingURL}/${bookingId}`;
 
 const payload = {
