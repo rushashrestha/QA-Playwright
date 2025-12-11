@@ -24,7 +24,7 @@ export class validator {
   async validateBookingFields(booking, expected) {
     expect(booking).toMatchObject({
       firstname: expected.firstname,
-      lastanme: expected.lastname,
+      lastname: expected.lastname,
       totalprice: expected.totalprice,
       depositpaid: expected.depositpaid,
     });
